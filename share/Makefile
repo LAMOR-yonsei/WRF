@@ -18,7 +18,8 @@ MODULES1=                               \
         module_interp_nmm.o             \
         module_interp_store.o           \
         module_string_tools.o           \
-        module_MPP.o 
+        module_MPP.o                    \
+        module_LAMOR_timer.o
 
 MODULES2=                               \
         module_date_time.o              \

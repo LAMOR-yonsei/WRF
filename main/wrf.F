@@ -4,6 +4,7 @@
 PROGRAM wrf
 
    USE module_wrf_top, only : wrf_init, wrf_dfi, wrf_run, wrf_finalize
+   USE module_LAMOR_timer
 #if ( WRFPLUS == 1 )
    USE module_wrf_top, only : config_flags, wrf_adtl_check, &
                               wrf_run_tl_standalone, wrf_run_ad_standalone
@@ -30,7 +31,9 @@ PROGRAM wrf
   CALL wrf_init
 
   ! Run digital filter initialization if requested.
+  CALL timer_LAMOR_tik(count_num, stime, 1)
   CALL wrf_dfi
+  CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 1)
 
 #if ( WRFPLUS == 1 )
   ! Run adjoint check and tangent linear check if requested.

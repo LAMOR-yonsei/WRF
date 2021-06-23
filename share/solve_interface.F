@@ -8,6 +8,7 @@ SUBROUTINE solve_interface ( grid )
    USE module_driver_constants
    USE module_configure
    USE module_wrf_error
+   USE module_LAMOR_timer
 #if( EM_CORE == 1 )
    USE module_trajectory, only : trajectory_driver
 #endif
@@ -32,6 +33,7 @@ SUBROUTINE solve_interface ( grid )
    CALL model_to_grid_config_rec ( grid%id , model_config_rec , config_flags )
    CALL set_scalar_indices_from_config ( grid%id , idum1 , idum2 )
 
+   CALL timer_LAMOR_tik(count_num, stime, 2)
 #if (EM_CORE == 1 && DA_CORE != 1)
    
 #if ( WRFPLUS == 1 )
@@ -69,6 +71,8 @@ SUBROUTINE solve_interface ( grid )
    ENDIF
 # endif
 #endif
+
+   CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 2)
 
 # if ( EM_CORE == 1 && WRFPLUS != 1 )
    if( grid%traj_opt /= no_trajectory ) then

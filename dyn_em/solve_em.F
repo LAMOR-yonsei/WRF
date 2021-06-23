@@ -78,6 +78,7 @@ SUBROUTINE solve_em ( grid , config_flags  &
    USE module_llxy, ONLY : proj_cassini
    USE module_avgflx_em, ONLY : zero_avgflx, upd_avgflx
    USE module_cpl, ONLY : coupler_on, cpl_settime, cpl_store_input
+   USE module_LAMOR_timer
 
    IMPLICIT NONE
 
@@ -3649,7 +3650,7 @@ BENCH_START(micro_driver_tim)
 #      include "HALO_EM_SBM.inc"
 #endif
 
-
+     CALL timer_LAMOR_tik(count_num, stime, 3)
      CALL microphysics_driver(                                            &
       &         DT=dtm             ,DX=grid%dx              ,DY=grid%dy   &
       &        ,DZ8W=dz8w          ,F_ICE_PHY=grid%f_ice_phy              &
@@ -3894,7 +3895,8 @@ BENCH_START(micro_driver_tim)
       &        ,CCN4_GS=grid%CCN4_GS,CCN5_GS=grid%CCN5_GS,CCN6_GS=grid%CCN6_GS &
       &        ,CCN7_GS=grid%CCN7_GS,NR_CU=grid%NR_CU,QR_CU=grid%QR_CU,NS_CU=grid%NS_CU &
       &        ,QS_CU=grid%QS_CU,CU_UAF=grid%CU_UAF,mskf_refl_10cm=grid%mskf_refl_10cm)
-                                                                          
+
+       call timer_LAMOR_tok(count_num, stime, etime, count_time, 3)                                                                    
 BENCH_END(micro_driver_tim)
 
 #if 0

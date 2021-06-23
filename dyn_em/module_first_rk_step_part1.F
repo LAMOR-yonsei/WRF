@@ -50,6 +50,7 @@ CONTAINS
     USE module_force_scm
     USE module_convtrans_prep
     USE module_big_step_utilities_em, ONLY : phy_prep
+    USE module_LAMOR_timer
 !use module_scalar_tables
 #ifdef DM_PARALLEL
     USE module_dm, ONLY : local_communicator, mytask, ntasks, ntasks_x, ntasks_y, local_communicator_periodic, wrf_dm_maxval
@@ -256,6 +257,7 @@ BENCH_END(phy_prep_tim)
       CALL wrf_debug ( 200 , ' call radiation_driver' )
 BENCH_START(rad_driver_tim)
 
+      CALL timer_LAMOR_tik(count_num, stime, 4)
       CALL radiation_driver(                                                  &
      &         p_top=grid%p_top & !DJW 140312 added p_top for vertical nesting
      &        ,ACFRCV=grid%acfrcv      ,ACFRST=grid%acfrst      ,ALBEDO=grid%albedo  &
@@ -450,6 +452,7 @@ BENCH_START(rad_driver_tim)
      &         ,EFCG=grid%EFCG,EFCS=grid%EFCS,EFIG=grid%EFIG &
      &         ,EFIS=grid%EFIS,EFSG=grid%EFSG,aercu_opt=config_flags%aercu_opt & 
      &         ,EFSS=grid%EFSS,QS_CU=grid%QS_CU)
+      CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 4)
 
 BENCH_END(rad_driver_tim)
 
@@ -510,7 +513,7 @@ BENCH_START(surf_driver_tim)
 #endif
 
 
-
+      CALL timer_LAMOR_tik(count_num, stime, 5)
       CALL surface_driver(                                                &
      &        HYDRO_dt=HYDRO_dt,  sfcheadrt=grid%sfcheadrt,               &
      &        INFXSRT=grid%INFXSRT,  soldrain=grid%soldrain,              &
@@ -969,6 +972,7 @@ BENCH_START(surf_driver_tim)
      &        ,field_sf=grid%field_sf                                                & !SPP
      &        ,spp_pbl=config_flags%spp_pbl,pattern_spp_pbl=grid%pattern_spp_pbl     & !SPP
      &                                                           )
+      CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 5)
 
 #ifdef WRF_HYDRO
         if(HYDRO_dt .gt. 1 ) call wrf_drv_HYDRO(HYDRO_dt, grid,  &
@@ -990,6 +994,7 @@ BENCH_END(surf_driver_tim)
 
       CALL wrf_debug ( 200 , ' call pbl_driver' )
 BENCH_START(pbl_driver_tim)
+      CALL timer_LAMOR_tik(count_num, stime, 6)
       CALL pbl_driver(                                                              &
      &         AKHS=grid%akhs          ,AKMS=grid%akms                              &
      &        ,BL_PBL_PHYSICS=config_flags%bl_pbl_physics                           &
@@ -1174,6 +1179,7 @@ BENCH_START(pbl_driver_tim)
 #endif
      &        ,QNORM=grid%QNORM, fasdas=config_flags%fasdas              & !fasdas
      &        )
+      CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 6)
 
 #if (WRF_CHEM == 1)
 #ifdef DM_PARALLEL
@@ -1232,6 +1238,7 @@ BENCH_END(fire_driver_tim)
 #endif
 
 BENCH_START(cu_driver_tim)
+      CALL timer_LAMOR_tik(count_num, stime, 7)
       CALL cumulus_driver(grid                                             &
                  ! Prognostic variables
      &             ,U=grid%u_phy   ,V=grid%v_phy   ,TH=th_phy  ,T=grid%t_phy                  &
@@ -1397,6 +1404,7 @@ BENCH_START(cu_driver_tim)
                    ,aeropcu=grid%aeropcu,ID=grid%id                                     &
                    ,JULDAY=grid%julday, JULIAN=grid%julian                              &
                    ,aerovar=grid%aerovar,EFCS=grid%EFCS,EFIS=grid%EFIS,EFSS=grid%EFSS)
+      CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 7)
 BENCH_END(cu_driver_tim)
 !
 ! this for calculating (G3 scheme only)  time averaged variables for online (WRF-CHem) or offline (other models) chem runs

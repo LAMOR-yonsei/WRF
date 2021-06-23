@@ -138,6 +138,7 @@ CONTAINS
 !<DESCRIPTION>
 !     WRF initialization routine.
 !</DESCRIPTION>
+     USE module_LAMOR_timer
 #ifdef _OPENMP
      use omp_lib
 #endif
@@ -188,6 +189,8 @@ CONTAINS
    ! Phase 2 resumes after MPI_INIT() (if it is called)
    CALL init_modules(2)
 
+   CALL timer_LAMOR_init(count_num, stime, etime, count_time, routine_name)
+   CALL timer_LAMOR_tik(count_num, stime, 10)
 !<DESCRIPTION>
 ! The wrf namelist.input file is read and stored in the USE associated
 ! structure model_config_rec, defined in frame/module_configure.F, by the
@@ -2092,6 +2095,7 @@ ENDIF
 
 
    SUBROUTINE wrf_finalize( no_shutdown )
+      USE module_LAMOR_timer
 !<DESCRIPTION>
 !     WRF finalize routine.
 !</DESCRIPTION>
@@ -2108,6 +2112,9 @@ ENDIF
 ! 
 !</DESCRIPTION>
      LOGICAL, OPTIONAL, INTENT(IN) :: no_shutdown
+
+   CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 10)
+   CALL timer_LAMOR_finalize(count_num, stime, etime, count_time, routine_name)
 
    ! shut down I/O
    CALL med_shutdown_io ( head_grid , config_flags )

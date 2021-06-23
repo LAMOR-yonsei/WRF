@@ -187,6 +187,7 @@ CONTAINS
 !-------------------------------------------------------------------------
 
 ! !USES:
+   USE module_LAMOR_timer
    USE module_state_description, ONLY : RRTMSCHEME, GFDLLWSCHEME        &
                                        ,RRTMG_LWSCHEME, RRTMG_SWSCHEME  &
 #if( BUILD_RRTMG_FAST == 1)
@@ -1716,6 +1717,7 @@ CONTAINS
      ENDIF
      ENDIF
 
+     CALL timer_LAMOR_tik(count_num, stime, 8)
      lwrad_select: SELECT CASE(lw_physics)
 
         CASE (RRTMSCHEME)
@@ -2158,6 +2160,7 @@ CONTAINS
              CALL wrf_error_fatal ( wrf_err_message )
            
      END SELECT lwrad_select    
+     CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 8)
 
      IF (lw_physics .gt. 0 .and. .not.gfdl_lw .and. .not.flg_lw) THEN
         DO j=jts,jte
@@ -2246,6 +2249,7 @@ CONTAINS
        ENDIF
      ENDIF
 
+     CALL timer_LAMOR_tik(count_num, stime, 9)
      swrad_select: SELECT CASE(sw_physics)
 
         CASE (SWRADSCHEME)
@@ -2687,6 +2691,7 @@ CONTAINS
              CALL wrf_error_fatal ( wrf_err_message )
 
      END SELECT swrad_select    
+     CALL timer_LAMOR_tok(count_num, stime, etime, count_time, 9)
 
 !NUWRF JJS 20090623  vvvvv
      IF (sw_physics .eq. goddardswscheme) THEN
